@@ -109,6 +109,29 @@ jobs:
           mod.validate_release_tag(os.environ['RELEASE_TAG'], version)
           print('buildozer version =', version)
           print('release tag =', os.environ['RELEASE_TAG'])
+          print('normalized app version =', mod.normalize_release_tag(os.environ['RELEASE_TAG']))
+          PY
+
+      - name: Normalize build version for python-for-android
+        run: |
+          python - <<'PY'
+          import os
+          import re
+          from pathlib import Path
+          from importlib.machinery import SourceFileLoader
+
+          mod = SourceFileLoader('release_meta', '.github/scripts/release_meta.py').load_module()
+          app_version = mod.normalize_release_tag(os.environ['RELEASE_TAG'])
+          if not re.fullmatch(r'\d+(?:\.\d+)*', app_version):
+              raise SystemExit(f'versão normalizada inválida para buildozer/p4a: {app_version!r}')
+
+          spec = Path('buildozer.spec')
+          text = spec.read_text(encoding='utf-8', errors='ignore')
+          text, n = re.subn(r'(?m)^\s*version\s*=\s*([^\s#]+)\s*$', f'version = {app_version}', text, count=1)
+          if n != 1:
+              raise SystemExit('não foi possível atualizar a versão no buildozer.spec')
+          spec.write_text(text, encoding='utf-8')
+          print('buildozer.spec version ajustada para', app_version)
           PY
 
       - name: Set up Java 17
