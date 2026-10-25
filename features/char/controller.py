@@ -913,7 +913,7 @@ class CharControllerMixin:
                 # - não bloqueia a exibição do resultado básico
                 # -----------------------------------------------------------
                 try:
-                    # Status "oficial": tenta novamente via /v4/world (mais confiável) e evita sobrescrever se já checamos.
+                    # Status "oficial": tenta novamente via /v5/world (mais confiável) e evita sobrescrever se já checamos.
                     if not bool(payload.get("_world_status_checked")):
                         try:
                             w_clean2 = str(payload.get("world") or "").strip()
@@ -936,7 +936,7 @@ class CharControllerMixin:
                         elif online_web is False:
                             payload["status"] = "offline"
 
-                    # Outros chars: tenta refinar o status via /v4/world/{world}
+                    # Outros chars: tenta refinar o status via /v5/world/{world}
                     try:
                         others = payload.get("other_characters")
                         if isinstance(others, list) and others:

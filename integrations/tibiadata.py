@@ -2,12 +2,12 @@
 
 Este módulo existe para evitar que mudanças de nome quebrem o app no Android.
 A UI (main.py) usa principalmente:
-- fetch_character_tibiadata  -> JSON completo da TibiaData v4
+- fetch_character_tibiadata  -> JSON completo da TibiaData v5
 - fetch_worlds_tibiadata     -> JSON completo da lista de mundos
 
 Também expomos:
 - fetch_character_snapshot   -> snapshot leve (para service/monitor)
-- is_character_online_tibiadata -> fallback para status Online/Offline via /v4/world/{world}
+- is_character_online_tibiadata -> fallback para status Online/Offline via /v5/world/{world}
 """
 
 from __future__ import annotations
@@ -22,10 +22,10 @@ import requests
 from bs4 import BeautifulSoup
 
 
-# TibiaData v4
-WORLDS_URL = "https://api.tibiadata.com/v4/worlds"
-CHAR_URL = "https://api.tibiadata.com/v4/character/{name}"
-WORLD_URL = "https://api.tibiadata.com/v4/world/{world}"
+# TibiaData v5
+WORLDS_URL = "https://api.tibiadata.com/v5/worlds"
+CHAR_URL = "https://api.tibiadata.com/v5/character/{name}"
+WORLD_URL = "https://api.tibiadata.com/v5/world/{world}"
 
 # GuildStats (fansite) – usado apenas para complementar informações (ex: xp lost em mortes)
 GUILDSTATS_DEATHS_URL = "https://guildstats.eu/character?nick={name}&tab=5"
@@ -61,6 +61,10 @@ def _get_json(url: str, timeout: int) -> Dict[str, Any]:
             r.raise_for_status()
             return r.json()
         except Exception as e:
+            response = getattr(e, "response", None)
+            status_code = getattr(response, "status_code", None)
+            if status_code is not None and 400 <= status_code < 500:
+                raise
             last_exc = e
             if attempt < 2:
                 time.sleep(0.6 * (2 ** attempt))
@@ -92,7 +96,7 @@ def _get_text(url: str, timeout: int, headers: Optional[dict] = None) -> str:
 
 
 def fetch_worlds_tibiadata(timeout: int = 12) -> Dict[str, Any]:
-    """JSON completo do endpoint /v4/worlds."""
+    """JSON completo do endpoint /v5/worlds."""
     return _get_json(WORLDS_URL, timeout)
 
 
@@ -109,7 +113,7 @@ def fetch_worlds(timeout: int = 12) -> List[str]:
 
 
 def fetch_character_tibiadata(name: str, timeout: int = 12) -> Dict[str, Any]:
-    """JSON completo do endpoint /v4/character/{name}."""
+    """JSON completo do endpoint /v5/character/{name}."""
     safe_name = quote(name)
     return _get_json(CHAR_URL.format(name=safe_name), timeout)
 
@@ -118,7 +122,7 @@ def fetch_character_snapshot(name: str, timeout: int = 12) -> Dict[str, Any]:
     """Snapshot leve (compat).
 
     Mantemos a assinatura para evitar quebrar código antigo. Hoje, retorna um
-    subconjunto do /v4/character.
+    subconjunto do /v5/character.
     """
     data = fetch_character_tibiadata(name=name, timeout=timeout)
     ch = (
@@ -167,7 +171,7 @@ def is_character_online_tibiadata(name: str, world: Optional[str] = None, timeou
 
         # Com world: checa lista de online players do mundo
         safe_world = quote(str(world).strip())
-        url = f"https://api.tibiadata.com/v4/world/{safe_world}"
+        url = WORLD_URL.format(world=safe_world)
         data = _get_json(url, timeout=timeout)
 
         world_block = (data or {}).get("world", {}) if isinstance(data, dict) else {}

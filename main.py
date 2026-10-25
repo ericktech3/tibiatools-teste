@@ -1025,7 +1025,7 @@ class TibiaToolsApp(CharControllerMixin, FavoritesControllerMixin, SettingsContr
     def _fetch_last_login_iso_for_char(self, name: str) -> Optional[str]:
         """Busca o last_login (UTC ISO) do char.
 
-        1) tenta TibiaData /v4/character
+        1) tenta TibiaData /v5/character
         2) fallback tibia.com
         """
         try:

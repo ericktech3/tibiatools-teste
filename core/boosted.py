@@ -71,13 +71,13 @@ def _cache_sprite(url: str, cache_dir: str, prefix: str) -> str:
     return ""
 
 def fetch_boosted():
-    """Retorna boosted creature e boosted boss usando TibiaData v4.
+    """Retorna boosted creature e boosted boss usando TibiaData v5.
 
     Além dos nomes, tenta retornar também os sprites (image_url) quando disponíveis.
     """
     try:
-        c = requests.get("https://api.tibiadata.com/v4/creatures", timeout=10).json()
-        b = requests.get("https://api.tibiadata.com/v4/boostablebosses", timeout=10).json()
+        c = requests.get("https://api.tibiadata.com/v5/creatures", timeout=10).json()
+        b = requests.get("https://api.tibiadata.com/v5/boostablebosses", timeout=10).json()
 
         c_boosted = ((c.get("creatures") or {}).get("boosted") or {})
         b_boosted = ((b.get("boostable_bosses") or {}).get("boosted") or {})

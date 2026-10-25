@@ -8,8 +8,8 @@ from urllib.parse import quote, quote_plus
 import requests
 from bs4 import BeautifulSoup
 
-TIBIADATA_CHAR = "https://api.tibiadata.com/v4/character/{name}"
-TIBIADATA_WORLD = "https://api.tibiadata.com/v4/world/{world}"
+TIBIADATA_CHAR = "https://api.tibiadata.com/v5/character/{name}"
+TIBIADATA_WORLD = "https://api.tibiadata.com/v5/world/{world}"
 TIBIA_CHAR_URL = "https://www.tibia.com/community/?subtopic=characters&name={name}"
 
 _UA = {
