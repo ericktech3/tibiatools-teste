@@ -9,7 +9,7 @@ App de utilidades para **Tibia** feito em **Kivy + KivyMD**, pensado para rodar 
 ## 📱 Funcionalidades
 
 ### Aba **Char**
-- **Busca de personagem** (nome) usando **TibiaData v4**
+- **Busca de personagem** (nome) usando **TibiaData v5**
   - mostra informações principais do personagem na tela (ex.: world, vocation, level e status quando disponível).
 - **Abrir no Tibia.com** (link direto do personagem).
 - **Favoritar** o personagem (para aparecer na aba Favoritos).
@@ -35,7 +35,7 @@ App de utilidades para **Tibia** feito em **Kivy + KivyMD**, pensado para rodar 
 - Mostra:
   - **Boosted Creature**
   - **Boosted Boss**
-- Botão **refresh** para atualizar (fonte: TibiaData v4).
+- Botão **refresh** para atualizar (fonte: TibiaData v5).
 
 #### 🏋️ Treino (Exercise)
 Calculadora para treino com **exercise weapons**:
